@@ -1,3 +1,5 @@
+from typing import Any
+
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,7 +19,7 @@ class DeviceRepository:
         status: str | None = None,
         team_id: str | None = None,
     ) -> tuple[list[Device], int]:
-        conditions = [Device.organization_id == org_id, Device.is_deleted.is_(False)]
+        conditions: list[Any] = [Device.organization_id == org_id, Device.is_deleted.is_(False)]
 
         if search:
             conditions.append(

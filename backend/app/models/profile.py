@@ -12,7 +12,9 @@ class Profile(Base):
 
     id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True)
     organization_id: Mapped[str | None] = mapped_column(
-        UUID(as_uuid=False), ForeignKey("organizations.id", ondelete="SET NULL"), nullable=True
+        UUID(as_uuid=False),
+        ForeignKey("organizations.id", ondelete="SET NULL"),
+        nullable=True,
     )
     email: Mapped[str] = mapped_column(String(255), nullable=False)
     first_name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -25,5 +27,8 @@ class Profile(Base):
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
     )

@@ -5,9 +5,9 @@ from app.repositories.profile import ProfileRepository
 from app.repositories.team import TeamRepository
 
 __all__ = [
+    "AuditLogRepository",
+    "DeviceRepository",
     "OrganizationRepository",
     "ProfileRepository",
     "TeamRepository",
-    "DeviceRepository",
-    "AuditLogRepository",
 ]

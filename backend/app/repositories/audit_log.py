@@ -42,7 +42,7 @@ class AuditLogRepository:
         resource: str | None = None,
         user_id: str | None = None,
     ) -> list[AuditLog]:
-        conditions = [AuditLog.organization_id == org_id]
+        conditions: list[Any] = [AuditLog.organization_id == org_id]
         if action:
             conditions.append(AuditLog.action == action)
         if resource:

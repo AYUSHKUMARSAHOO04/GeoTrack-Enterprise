@@ -15,10 +15,14 @@ class TeamMember(Base):
         UUID(as_uuid=False), primary_key=True, server_default=func.gen_random_uuid()
     )
     team_id: Mapped[str] = mapped_column(
-        UUID(as_uuid=False), ForeignKey("teams.id", ondelete="CASCADE"), nullable=False
+        UUID(as_uuid=False),
+        ForeignKey("teams.id", ondelete="CASCADE"),
+        nullable=False,
     )
     user_id: Mapped[str] = mapped_column(
-        UUID(as_uuid=False), ForeignKey("profiles.id", ondelete="CASCADE"), nullable=False
+        UUID(as_uuid=False),
+        ForeignKey("profiles.id", ondelete="CASCADE"),
+        nullable=False,
     )
     role: Mapped[str] = mapped_column(String(50), nullable=False, default="member")
     created_at: Mapped[datetime] = mapped_column(

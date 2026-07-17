@@ -5,9 +5,9 @@ from app.services.organization import OrganizationService
 from app.services.team import TeamService
 
 __all__ = [
+    "AuditLogService",
+    "DeviceService",
     "MeService",
     "OrganizationService",
     "TeamService",
-    "DeviceService",
-    "AuditLogService",
 ]

@@ -6,10 +6,10 @@ from app.models.team import Team
 from app.models.team_member import TeamMember
 
 __all__ = [
+    "AuditLog",
+    "Device",
     "Organization",
     "Profile",
     "Team",
     "TeamMember",
-    "Device",
-    "AuditLog",
 ]

@@ -4,12 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.rbac import AuthContext, require_permission
-from app.schemas import (
-    DeviceCreate,
-    DeviceResponse,
-    DeviceUpdate,
-    PaginatedResponse,
-)
+from app.schemas import DeviceCreate, DeviceResponse, DeviceUpdate, PaginatedResponse
 from app.services import DeviceService
 
 router = APIRouter()

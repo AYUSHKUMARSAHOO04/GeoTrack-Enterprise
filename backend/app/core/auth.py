@@ -12,6 +12,11 @@ bearer_scheme = HTTPBearer(auto_error=False)
 async def verify_supabase_jwt(
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
 ) -> dict[str, Any]:
+    """Verify a Supabase JWT and return the decoded payload.
+
+    Returns 401 for all authentication failures — missing token, invalid token,
+    expired token, or missing JWT secret configuration. Never returns 500.
+    """
     if not credentials:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -22,8 +27,8 @@ async def verify_supabase_jwt(
 
     if not settings.SUPABASE_JWT_SECRET:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="JWT verification not configured",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication not configured",
         )
 
     try:
