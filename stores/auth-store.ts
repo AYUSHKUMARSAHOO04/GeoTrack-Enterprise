@@ -1,12 +1,12 @@
 "use client";
 
 import { create } from "zustand";
-import type { MeResponse, Role, Permission } from "@/types";
+import type { MeResponse, Role } from "@/types";
 
 interface AuthState {
   user: MeResponse | null;
   role: Role | null;
-  permissions: Permission[];
+  permissions: string[];
   isLoading: boolean;
   setUser: (user: MeResponse | null) => void;
   setLoading: (loading: boolean) => void;
@@ -23,10 +23,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({
       user,
       role: user?.role ?? null,
-      permissions: (user?.permissions ?? []) as Permission[],
+      permissions: user?.permissions ?? [],
       isLoading: false,
     }),
   setLoading: (isLoading) => set({ isLoading }),
-  hasPermission: (perm) => get().permissions.includes(perm as Permission),
+  hasPermission: (perm) => get().permissions.includes(perm),
   reset: () => set({ user: null, role: null, permissions: [], isLoading: false }),
 }));

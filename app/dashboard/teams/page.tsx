@@ -4,13 +4,26 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient, ApiError } from "@/lib/api-client";
 import { useAuth } from "@/hooks/use-auth";
-import type { Team, TeamCreateInput, TeamUpdateInput, PaginatedResponse, TeamMember } from "@/types";
+import type {
+  Team,
+  TeamCreate,
+  TeamUpdate,
+  PaginatedResponse,
+  TeamMemberResponse,
+} from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Users, Plus, Pencil, Trash2 } from "lucide-react";
 
 export default function TeamsPage() {
@@ -27,12 +40,12 @@ export default function TeamsPage() {
 
   const { data: membersData } = useQuery({
     queryKey: ["teams", selectedTeam?.id, "members"],
-    queryFn: () => apiClient.get<TeamMember[]>(`/teams/${selectedTeam!.id}/members`),
+    queryFn: () => apiClient.get<TeamMemberResponse[]>(`/teams/${selectedTeam!.id}/members`),
     enabled: !!selectedTeam,
   });
 
   const createMutation = useMutation({
-    mutationFn: (input: TeamCreateInput) => apiClient.post<Team>("/teams", input),
+    mutationFn: (input: TeamCreate) => apiClient.post<Team>("/teams", input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["teams"] });
       setCreateOpen(false);
@@ -40,7 +53,7 @@ export default function TeamsPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, input }: { id: string; input: TeamUpdateInput }) =>
+    mutationFn: ({ id, input }: { id: string; input: TeamUpdate }) =>
       apiClient.patch<Team>(`/teams/${id}`, input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["teams"] });
@@ -67,7 +80,9 @@ export default function TeamsPage() {
         {canCreate && (
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
-              <Button><Plus className="mr-2 h-4 w-4" /> Create Team</Button>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" /> Create Team
+              </Button>
             </DialogTrigger>
             <DialogContent>
               <TeamForm
@@ -86,7 +101,9 @@ export default function TeamsPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Users className="mb-3 h-10 w-10 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">No teams found. {canCreate && "Create your first team to get started."}</p>
+            <p className="text-sm text-muted-foreground">
+              No teams found. {canCreate && "Create your first team to get started."}
+            </p>
           </CardContent>
         </Card>
       )}
@@ -94,16 +111,25 @@ export default function TeamsPage() {
       {!isLoading && !error && data && data.items.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {data.items.map((team) => (
-            <Card key={team.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelectedTeam(team)}>
+            <Card
+              key={team.id}
+              className="cursor-pointer hover:bg-muted/50"
+              onClick={() => setSelectedTeam(team)}
+            >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{team.name}</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <p className="text-xs text-muted-foreground">{team.description ?? "No description"}</p>
+                <p className="text-xs text-muted-foreground">
+                  {team.description ?? "No description"}
+                </p>
                 <div className="mt-3 flex gap-2" onClick={(e) => e.stopPropagation()}>
                   {canEdit && (
-                    <Dialog open={editTeam?.id === team.id} onOpenChange={(open) => !open && setEditTeam(null)}>
+                    <Dialog
+                      open={editTeam?.id === team.id}
+                      onOpenChange={(open) => !open && setEditTeam(null)}
+                    >
                       <DialogTrigger asChild>
                         <Button variant="outline" size="sm" onClick={() => setEditTeam(team)}>
                           <Pencil className="mr-1 h-3 w-3" /> Edit
@@ -114,7 +140,11 @@ export default function TeamsPage() {
                           team={team}
                           onSubmit={(input) => updateMutation.mutate({ id: team.id, input })}
                           loading={updateMutation.isPending}
-                          error={updateMutation.error instanceof ApiError ? updateMutation.error.message : null}
+                          error={
+                            updateMutation.error instanceof ApiError
+                              ? updateMutation.error.message
+                              : null
+                          }
                         />
                       </DialogContent>
                     </Dialog>
@@ -144,13 +174,20 @@ export default function TeamsPage() {
           </DialogHeader>
           <div className="space-y-2 py-4">
             {!membersData && <p className="text-sm text-muted-foreground">Loading members...</p>}
-            {membersData && membersData.length === 0 && <p className="text-sm text-muted-foreground">No members in this team.</p>}
+            {membersData && membersData.length === 0 && (
+              <p className="text-sm text-muted-foreground">No members in this team.</p>
+            )}
             {membersData && membersData.length > 0 && (
               <div className="space-y-2">
                 {membersData.map((m) => (
-                  <div key={m.id} className="flex items-center justify-between rounded-md border p-2">
+                  <div
+                    key={m.id}
+                    className="flex items-center justify-between rounded-md border p-2"
+                  >
                     <div>
-                      <p className="text-sm font-medium">{m.firstName} {m.lastName}</p>
+                      <p className="text-sm font-medium">
+                        {m.first_name} {m.last_name}
+                      </p>
                       <p className="text-xs text-muted-foreground">{m.email}</p>
                     </div>
                     <Badge variant={m.role === "lead" ? "default" : "secondary"}>{m.role}</Badge>
@@ -172,7 +209,7 @@ function TeamForm({
   error,
 }: {
   team?: Team;
-  onSubmit: (input: TeamCreateInput) => void;
+  onSubmit: (input: TeamCreate) => void;
   loading: boolean;
   error: string | null;
 }) {
@@ -196,12 +233,18 @@ function TeamForm({
         </div>
         <div className="space-y-2">
           <Label htmlFor="description">Description</Label>
-          <Input id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
+          <Input
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
       </div>
       <DialogFooter>
-        <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Save"}</Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? "Saving..." : "Save"}
+        </Button>
       </DialogFooter>
     </form>
   );

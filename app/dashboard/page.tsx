@@ -19,9 +19,12 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Welcome back, {user?.firstName}</h1>
+        <h1 className="text-2xl font-bold">Welcome back, {user?.first_name}</h1>
         <p className="text-sm text-muted-foreground">
-          {user?.organization?.name} · <Badge variant="secondary" className="capitalize">{user?.role}</Badge>
+          {user?.organization?.name} ·{" "}
+          <Badge variant="secondary" className="capitalize">
+            {user?.role}
+          </Badge>
         </p>
       </div>
 
@@ -32,7 +35,9 @@ export default function DashboardPage() {
             <Link key={stat.label} href={stat.href}>
               <Card className="transition-colors hover:bg-muted/50">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    {stat.label}
+                  </CardTitle>
                   <Icon className={`h-4 w-4 ${stat.color}`} />
                 </CardHeader>
                 <CardContent>

@@ -4,17 +4,31 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient, ApiError } from "@/lib/api-client";
 import { useAuth } from "@/hooks/use-auth";
-import type { Device, DeviceCreateInput, DeviceUpdateInput, PaginatedResponse, Team } from "@/types";
+import type {
+  Device,
+  DeviceCreate,
+  DeviceUpdate,
+  PaginatedResponse,
+  Team,
+  BadgeVariant,
+} from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Cpu, Plus, Search, Pencil, Trash2 } from "lucide-react";
 
-const STATUS_COLORS: Record<string, string> = {
+const STATUS_VARIANT: Record<string, BadgeVariant> = {
   active: "success",
   inactive: "secondary",
   maintenance: "warning",
@@ -46,7 +60,7 @@ export default function DevicesPage() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (input: DeviceCreateInput) => apiClient.post<Device>("/devices", input),
+    mutationFn: (input: DeviceCreate) => apiClient.post<Device>("/devices", input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["devices"] });
       setCreateOpen(false);
@@ -54,7 +68,7 @@ export default function DevicesPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, input }: { id: string; input: DeviceUpdateInput }) =>
+    mutationFn: ({ id, input }: { id: string; input: DeviceUpdate }) =>
       apiClient.patch<Device>(`/devices/${id}`, input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["devices"] });
@@ -81,7 +95,9 @@ export default function DevicesPage() {
         {canCreate && (
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
-              <Button><Plus className="mr-2 h-4 w-4" /> Add Device</Button>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" /> Add Device
+              </Button>
             </DialogTrigger>
             <DialogContent>
               <DeviceForm
@@ -101,11 +117,20 @@ export default function DevicesPage() {
           <Input
             placeholder="Search devices..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             className="pl-9"
           />
         </div>
-        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+        <Select
+          value={statusFilter}
+          onValueChange={(v) => {
+            setStatusFilter(v);
+            setPage(1);
+          }}
+        >
           <SelectTrigger className="w-full sm:w-40">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
@@ -125,7 +150,9 @@ export default function DevicesPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Cpu className="mb-3 h-10 w-10 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">No devices found. {canCreate && "Create your first device to get started."}</p>
+            <p className="text-sm text-muted-foreground">
+              No devices found. {canCreate && "Create your first device to get started."}
+            </p>
           </CardContent>
         </Card>
       )}
@@ -136,21 +163,32 @@ export default function DevicesPage() {
             <Card key={device.id}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{device.name}</CardTitle>
-                <Badge variant={(STATUS_COLORS[device.status] as "success" | "secondary" | "warning" | "destructive") ?? "secondary"}>
+                <Badge variant={STATUS_VARIANT[device.status] ?? "secondary"}>
                   {device.status}
                 </Badge>
               </CardHeader>
               <CardContent>
                 <div className="space-y-1 text-xs text-muted-foreground">
-                  <p>Type: <span className="capitalize">{device.deviceType.replace(/_/g, " ")}</span></p>
-                  {device.externalIdentifier && <p>ID: {device.externalIdentifier}</p>}
-                  {device.assignedTeamId && <p>Team: {teamsData?.items.find((t) => t.id === device.assignedTeamId)?.name ?? "—"}</p>}
-                  {device.lastSeenAt && <p>Last seen: {new Date(device.lastSeenAt).toLocaleString()}</p>}
+                  <p>
+                    Type: <span className="capitalize">{device.device_type.replace(/_/g, " ")}</span>
+                  </p>
+                  {device.external_identifier && <p>ID: {device.external_identifier}</p>}
+                  {device.assigned_team_id && (
+                    <p>
+                      Team: {teamsData?.items.find((t) => t.id === device.assigned_team_id)?.name ?? "—"}
+                    </p>
+                  )}
+                  {device.last_seen_at && (
+                    <p>Last seen: {new Date(device.last_seen_at).toLocaleString()}</p>
+                  )}
                 </div>
                 {(canEdit || canDelete) && (
                   <div className="mt-3 flex gap-2">
                     {canEdit && (
-                      <Dialog open={editDevice?.id === device.id} onOpenChange={(open) => !open && setEditDevice(null)}>
+                      <Dialog
+                        open={editDevice?.id === device.id}
+                        onOpenChange={(open) => !open && setEditDevice(null)}
+                      >
                         <DialogTrigger asChild>
                           <Button variant="outline" size="sm" onClick={() => setEditDevice(device)}>
                             <Pencil className="mr-1 h-3 w-3" /> Edit
@@ -162,7 +200,11 @@ export default function DevicesPage() {
                             teams={teamsData?.items ?? []}
                             onSubmit={(input) => updateMutation.mutate({ id: device.id, input })}
                             loading={updateMutation.isPending}
-                            error={updateMutation.error instanceof ApiError ? updateMutation.error.message : null}
+                            error={
+                              updateMutation.error instanceof ApiError
+                                ? updateMutation.error.message
+                                : null
+                            }
                           />
                         </DialogContent>
                       </Dialog>
@@ -172,7 +214,8 @@ export default function DevicesPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          if (confirm(`Delete device "${device.name}"?`)) deleteMutation.mutate(device.id);
+                          if (confirm(`Delete device "${device.name}"?`))
+                            deleteMutation.mutate(device.id);
                         }}
                       >
                         <Trash2 className="mr-1 h-3 w-3" /> Delete
@@ -189,11 +232,20 @@ export default function DevicesPage() {
       {data && data.total > 20 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Page {data.page} of {Math.ceil(data.total / data.pageSize)}
+            Page {data.page} of {Math.ceil(data.total / data.page_size)}
           </p>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>Previous</Button>
-            <Button variant="outline" size="sm" disabled={page * 20 >= data.total} onClick={() => setPage(page + 1)}>Next</Button>
+            <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page * 20 >= data.total}
+              onClick={() => setPage(page + 1)}
+            >
+              Next
+            </Button>
           </div>
         </div>
       )}
@@ -210,26 +262,28 @@ function DeviceForm({
 }: {
   device?: Device;
   teams: Team[];
-  onSubmit: (input: DeviceCreateInput) => void;
+  onSubmit: (input: DeviceCreate) => void;
   loading: boolean;
   error: string | null;
 }) {
   const [name, setName] = useState(device?.name ?? "");
-  const [externalIdentifier, setExternalIdentifier] = useState(device?.externalIdentifier ?? "");
-  const [deviceType, setDeviceType] = useState<string>(device?.deviceType ?? "vehicle_tracker");
+  const [external_identifier, setExternalId] = useState(device?.external_identifier ?? "");
+  const [device_type, setDeviceType] = useState<string>(device?.device_type ?? "vehicle_tracker");
   const [status, setStatus] = useState<string>(device?.status ?? "active");
-  const [assignedTeamId, setAssignedTeamId] = useState<string>(device?.assignedTeamId ?? "none");
+  const [assigned_team_id, setAssignedTeamId] = useState<string>(
+    device?.assigned_team_id ?? "none",
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const input: DeviceCreateInput = {
+    const input: DeviceCreate = {
       name,
-      externalIdentifier: externalIdentifier || undefined,
-      deviceType: deviceType as Device["deviceType"],
-      assignedTeamId: assignedTeamId === "none" ? undefined : assignedTeamId,
+      external_identifier: external_identifier || undefined,
+      device_type: device_type as Device["device_type"],
+      assigned_team_id: assigned_team_id === "none" ? undefined : assigned_team_id,
     };
     if (device) {
-      (input as DeviceUpdateInput).status = status as Device["status"];
+      (input as DeviceUpdate).status = status as Device["status"];
     }
     onSubmit(input);
   };
@@ -246,12 +300,18 @@ function DeviceForm({
         </div>
         <div className="space-y-2">
           <Label htmlFor="externalId">External Identifier</Label>
-          <Input id="externalId" value={externalIdentifier} onChange={(e) => setExternalIdentifier(e.target.value)} />
+          <Input
+            id="externalId"
+            value={external_identifier}
+            onChange={(e) => setExternalId(e.target.value)}
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="type">Device Type</Label>
-          <Select value={deviceType} onValueChange={setDeviceType}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+          <Select value={device_type} onValueChange={setDeviceType}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="vehicle_tracker">Vehicle Tracker</SelectItem>
               <SelectItem value="phone">Phone</SelectItem>
@@ -264,7 +324,9 @@ function DeviceForm({
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
             <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="inactive">Inactive</SelectItem>
@@ -276,12 +338,16 @@ function DeviceForm({
         )}
         <div className="space-y-2">
           <Label htmlFor="team">Assigned Team</Label>
-          <Select value={assignedTeamId} onValueChange={setAssignedTeamId}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+          <Select value={assigned_team_id} onValueChange={setAssignedTeamId}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="none">No team</SelectItem>
               {teams.map((t) => (
-                <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                <SelectItem key={t.id} value={t.id}>
+                  {t.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -289,7 +355,9 @@ function DeviceForm({
         {error && <p className="text-sm text-destructive">{error}</p>}
       </div>
       <DialogFooter>
-        <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Save"}</Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? "Saving..." : "Save"}
+        </Button>
       </DialogFooter>
     </form>
   );

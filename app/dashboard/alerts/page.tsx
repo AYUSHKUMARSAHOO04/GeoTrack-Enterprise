@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bell } from "lucide-react";
 
@@ -14,7 +14,9 @@ export default function AlertsPage() {
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-20">
           <Bell className="mb-3 h-12 w-12 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">The alert system will be available in a future phase.</p>
+          <p className="text-sm text-muted-foreground">
+            The alert system will be available in a future phase.
+          </p>
         </CardContent>
       </Card>
     </div>

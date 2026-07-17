@@ -12,7 +12,9 @@ export class ApiError extends Error {
 }
 
 async function getAuthHeaders(): Promise<HeadersInit> {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const headers: HeadersInit = { "Content-Type": "application/json" };
   if (session?.access_token) headers.Authorization = `Bearer ${session.access_token}`;
   return headers;
@@ -29,7 +31,9 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     try {
       const error = await response.json();
       message = error.detail ?? error.message ?? message;
-    } catch { /* use default */ }
+    } catch {
+      // use default message
+    }
     throw new ApiError(response.status, message);
   }
   if (response.status === 204) return undefined as T;

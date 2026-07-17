@@ -18,6 +18,6 @@ export function createServerClient() {
           cookieStore.set(name, "", { ...options, maxAge: -1 });
         },
       },
-    }
+    },
   );
 }

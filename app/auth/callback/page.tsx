@@ -13,5 +13,9 @@ export default function AuthCallback() {
       else router.push("/dashboard");
     })();
   }, [router]);
-  return <div className="flex min-h-screen items-center justify-center"><p className="text-muted-foreground">Completing sign in...</p></div>;
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <p className="text-muted-foreground">Completing sign in...</p>
+    </div>
+  );
 }

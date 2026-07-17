@@ -32,13 +32,13 @@ export function Topbar() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" className="gap-2">
               <User className="h-4 w-4" />
-              <span className="hidden sm:inline">{user?.firstName ?? "User"}</span>
+              <span className="hidden sm:inline">{user?.first_name ?? "User"}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>
               <div className="flex flex-col">
-                <span>{user ? `${user.firstName} ${user.lastName}` : "User"}</span>
+                <span>{user ? `${user.first_name} ${user.last_name}` : "User"}</span>
                 <span className="text-xs font-normal text-muted-foreground">{user?.email}</span>
               </div>
             </DropdownMenuLabel>

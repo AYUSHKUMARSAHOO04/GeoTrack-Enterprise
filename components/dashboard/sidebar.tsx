@@ -2,16 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Map,
-  Cpu,
-  BarChart3,
-  Bell,
-  Users,
-  Settings,
-  Building2,
-} from "lucide-react";
+import { LayoutDashboard, Map, Cpu, BarChart3, Bell, Users, Settings, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/ui-store";
 
@@ -33,7 +24,7 @@ export function Sidebar() {
     <aside
       className={cn(
         "flex flex-col border-r bg-card transition-all duration-300",
-        collapsed ? "w-16" : "w-60"
+        collapsed ? "w-16" : "w-60",
       )}
     >
       <div className="flex h-14 items-center gap-2 border-b px-4">
@@ -52,7 +43,7 @@ export function Sidebar() {
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 active
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />
