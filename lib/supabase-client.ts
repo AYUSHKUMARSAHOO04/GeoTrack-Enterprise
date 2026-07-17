@@ -10,9 +10,5 @@ export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 export const supabase: SupabaseClient = createClient(
   supabaseUrl || "http://localhost:54321",
   supabaseAnonKey || "placeholder-anon-key",
-  {
-    auth: {
-      persistSession: typeof window !== "undefined",
-    },
-  }
+  { auth: { persistSession: typeof window !== "undefined" } }
 );
