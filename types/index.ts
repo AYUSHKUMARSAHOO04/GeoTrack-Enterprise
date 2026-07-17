@@ -3,8 +3,6 @@
 // The backend API returns snake_case JSON. Frontend types match exactly.
 // ============================================================================
 
-// ─── RBAC ───────────────────────────────────────────────────────────────────
-
 export type Role = "owner" | "admin" | "manager" | "operator" | "viewer";
 
 export type TeamRole = "lead" | "member";
@@ -27,15 +25,11 @@ export const PERMISSIONS = [
 
 export type Permission = (typeof PERMISSIONS)[number];
 
-// ─── Enums ──────────────────────────────────────────────────────────────────
-
 export type DeviceStatus = "active" | "inactive" | "maintenance" | "retired";
 
 export type DeviceType = "vehicle_tracker" | "phone" | "iot_gps" | "field_worker";
 
 export type OrganizationPlan = "free" | "starter" | "pro" | "enterprise";
-
-// ─── UI Helpers ─────────────────────────────────────────────────────────────
 
 export type BadgeVariant =
   | "default"
@@ -44,8 +38,6 @@ export type BadgeVariant =
   | "outline"
   | "success"
   | "warning";
-
-// ─── Organization ───────────────────────────────────────────────────────────
 
 export interface Organization {
   id: string;
@@ -68,8 +60,6 @@ export interface OrganizationUpdate {
   name?: string;
   plan?: OrganizationPlan;
 }
-
-// ─── Profile ────────────────────────────────────────────────────────────────
 
 export interface Profile {
   id: string;
@@ -100,8 +90,6 @@ export interface ProfileUpdate {
   avatar_url?: string | null;
 }
 
-// ─── Me ─────────────────────────────────────────────────────────────────────
-
 export interface MeResponse {
   id: string;
   email: string;
@@ -111,8 +99,6 @@ export interface MeResponse {
   organization: OrganizationBrief | null;
   permissions: string[];
 }
-
-// ─── Team ───────────────────────────────────────────────────────────────────
 
 export interface Team {
   id: string;
@@ -149,8 +135,6 @@ export interface AddMemberRequest {
   role: TeamRole;
 }
 
-// ─── Device ──────────────────────────────────────────────────────────────────
-
 export interface Device {
   id: string;
   organization_id: string;
@@ -182,8 +166,6 @@ export interface DeviceUpdate {
   metadata?: Record<string, unknown>;
 }
 
-// ─── AuditLog ────────────────────────────────────────────────────────────────
-
 export interface AuditLog {
   id: string;
   user_id: string | null;
@@ -195,8 +177,6 @@ export interface AuditLog {
   ip_address: string | null;
   created_at: string;
 }
-
-// ─── Pagination ─────────────────────────────────────────────────────────────
 
 export interface PaginatedResponse<T> {
   items: T[];

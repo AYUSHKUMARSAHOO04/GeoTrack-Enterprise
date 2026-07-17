@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.rbac import AuthContext
@@ -16,8 +17,6 @@ class OrganizationService:
     async def get_current_org(self, ctx: AuthContext) -> OrganizationResponse:
         org = await self.org_repo.get_by_id(ctx.organization_id)
         if not org:
-            from fastapi import HTTPException, status
-
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Organization not found"
             )
@@ -26,8 +25,6 @@ class OrganizationService:
     async def update_org(self, ctx: AuthContext, data: OrganizationUpdate) -> OrganizationResponse:
         org = await self.org_repo.get_by_id(ctx.organization_id)
         if not org:
-            from fastapi import HTTPException, status
-
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Organization not found"
             )

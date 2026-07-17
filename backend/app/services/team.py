@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.rbac import AuthContext
 from app.models import Team
-from app.repositories import AuditLogRepository, TeamRepository
+from app.repositories import AuditLogRepository, ProfileRepository, TeamRepository
 from app.schemas import TeamCreate, TeamMemberResponse, TeamResponse, TeamUpdate
 
 
@@ -63,7 +63,7 @@ class TeamService:
     async def list_members(self, ctx: AuthContext, team_id: str) -> list[TeamMemberResponse]:
         await self._get_team_or_404(ctx.organization_id, team_id)
         members = await self.team_repo.list_members(team_id)
-        result = []
+        result: list[TeamMemberResponse] = []
         for member, profile in members:
             result.append(
                 TeamMemberResponse(
@@ -83,8 +83,6 @@ class TeamService:
         self, ctx: AuthContext, team_id: str, user_id: str, role: str = "member"
     ) -> TeamMemberResponse:
         await self._get_team_or_404(ctx.organization_id, team_id)
-        from app.repositories import ProfileRepository
-
         profile_repo = ProfileRepository(self.db)
         profile = await profile_repo.get_by_id(user_id)
         if not profile or profile.organization_id != ctx.organization_id:
