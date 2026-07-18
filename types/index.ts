@@ -184,3 +184,110 @@ export interface PaginatedResponse<T> {
   page: number;
   page_size: number;
 }
+
+// ============================================================================
+// Phase 5: Location & Trip types
+// ============================================================================
+
+export type DeviceOnlineStatus = "online" | "offline" | "idle" | "moving" | "stopped";
+
+export type LocationProvider = "gps" | "network" | "fused" | null;
+
+export interface Location {
+  id: string;
+  device_id: string;
+  organization_id: string;
+  latitude: number;
+  longitude: number;
+  accuracy: number | null;
+  altitude: number | null;
+  heading: number | null;
+  speed: number | null;
+  battery_level: number | null;
+  signal_strength: number | null;
+  provider: LocationProvider;
+  captured_at: string;
+  received_at: string;
+}
+
+export interface LocationIngest {
+  latitude: number;
+  longitude: number;
+  accuracy?: number;
+  altitude?: number;
+  heading?: number;
+  speed?: number;
+  battery_level?: number;
+  signal_strength?: number;
+  provider?: LocationProvider;
+  captured_at: string;
+}
+
+export interface DeviceTrackingStatus {
+  device_id: string;
+  organization_id: string;
+  status: DeviceOnlineStatus;
+  last_latitude: number | null;
+  last_longitude: number | null;
+  last_heading: number | null;
+  last_speed: number | null;
+  last_battery_level: number | null;
+  last_captured_at: string | null;
+  last_received_at: string | null;
+  current_trip_id: string | null;
+  updated_at: string;
+}
+
+export type TripStatus = "active" | "completed" | "cancelled";
+
+export interface Trip {
+  id: string;
+  device_id: string;
+  organization_id: string;
+  start_time: string;
+  end_time: string | null;
+  distance_meters: number;
+  duration_seconds: number | null;
+  avg_speed_kmh: number | null;
+  max_speed_kmh: number | null;
+  idle_duration_seconds: number;
+  point_count: number;
+  status: TripStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DeviceCredential {
+  id: string;
+  device_id: string;
+  api_key_prefix: string;
+  status: "active" | "suspended" | "revoked";
+  issued_at: string;
+  expires_at: string | null;
+  last_used_at: string | null;
+}
+
+export interface DeviceCredentialCreate {
+  credential: DeviceCredential;
+  api_key: string;
+  secret: string;
+}
+
+export interface WebSocketMessage {
+  type: string;
+  data: {
+    device_id?: string;
+    organization_id?: string;
+    latitude?: number;
+    longitude?: number;
+    heading?: number;
+    speed?: number;
+    battery_level?: number;
+    captured_at?: string;
+    trip_id?: string;
+    start_time?: string;
+    end_time?: string;
+    distance_meters?: number;
+    duration_seconds?: number;
+  };
+}
