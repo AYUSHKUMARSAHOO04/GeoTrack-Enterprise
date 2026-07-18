@@ -6,12 +6,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api.v1.router import api_router
+from app.api.v1.websocket import router as ws_router
 from app.core.config import settings
+from app.core.redis import RedisService
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     yield
+    await RedisService.close()
 
 
 app = FastAPI(
@@ -29,6 +32,7 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+app.include_router(ws_router, prefix=settings.API_V1_PREFIX)
 
 
 @app.exception_handler(Exception)
