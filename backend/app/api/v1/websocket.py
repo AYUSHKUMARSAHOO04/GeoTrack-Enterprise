@@ -84,6 +84,13 @@ async def _redis_listener(org_id: str) -> None:
         RedisChannels.DEVICE_OFFLINE,
         RedisChannels.TRIP_STARTED,
         RedisChannels.TRIP_ENDED,
+        RedisChannels.GEOFENCE_ENTER,
+        RedisChannels.GEOFENCE_EXIT,
+        RedisChannels.GEOFENCE_DWELL,
+        RedisChannels.ALERT_TRIGGERED,
+        RedisChannels.ALERT_ACKNOWLEDGED,
+        RedisChannels.ALERT_RESOLVED,
+        RedisChannels.NOTIFICATION_CREATED,
     )
     try:
         async for message in pubsub.listen():

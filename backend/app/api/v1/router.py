@@ -1,12 +1,18 @@
 from fastapi import APIRouter
 
+from app.api.v1.alerts import router as alerts_router
+from app.api.v1.analytics import router as analytics_router
 from app.api.v1.audit_logs import router as audit_logs_router
 from app.api.v1.device_credentials import router as credentials_router
 from app.api.v1.devices import router as devices_router
+from app.api.v1.geofences import router as geofences_router
 from app.api.v1.health import router as health_router
 from app.api.v1.locations import router as locations_router
 from app.api.v1.me import router as me_router
+from app.api.v1.notifications import router as notifications_router
 from app.api.v1.organizations import router as org_router
+from app.api.v1.rules import router as rules_router
+from app.api.v1.search import router as search_router
 from app.api.v1.teams import router as teams_router
 from app.api.v1.websocket import router as ws_router
 
@@ -18,5 +24,11 @@ api_router.include_router(teams_router, tags=["teams"])
 api_router.include_router(devices_router, tags=["devices"])
 api_router.include_router(credentials_router, tags=["device-credentials"])
 api_router.include_router(locations_router, tags=["locations"])
+api_router.include_router(geofences_router, tags=["geofences"])
+api_router.include_router(rules_router, tags=["alert-rules"])
+api_router.include_router(alerts_router, tags=["alerts"])
+api_router.include_router(notifications_router, tags=["notifications"])
+api_router.include_router(analytics_router, tags=["analytics"])
+api_router.include_router(search_router, tags=["search"])
 api_router.include_router(audit_logs_router, tags=["audit-logs"])
 api_router.include_router(ws_router, tags=["websocket"])

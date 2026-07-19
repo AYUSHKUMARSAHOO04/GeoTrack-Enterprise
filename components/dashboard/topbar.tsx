@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { NotificationBell } from "@/components/dashboard/notification-bell";
 
 export function Topbar() {
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
@@ -28,6 +29,7 @@ export function Topbar() {
         </span>
       </div>
       <div className="flex items-center gap-2">
+        <NotificationBell />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" className="gap-2">

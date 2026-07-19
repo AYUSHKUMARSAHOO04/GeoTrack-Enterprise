@@ -13,6 +13,8 @@ from app.repositories import (
     TripRepository,
 )
 from app.schemas import LocationIngest, LocationResponse
+from app.services.alert_engine import AlertEngineService
+from app.services.geofence import GeofenceService
 
 MOVING_SPEED_THRESHOLD = 5.0
 IDLE_TIMEOUT_SECONDS = 300
@@ -59,6 +61,13 @@ class LocationService:
 
         await self._update_device_status(device, location)
         await self._detect_and_update_trip(device, location)
+
+        geofence_service = GeofenceService(self.db)
+        await geofence_service.check_location(device, location)
+
+        alert_engine = AlertEngineService(self.db)
+        status = await self.status_repo.get_by_device(device.id)
+        await alert_engine.evaluate_location(device, location, status)
 
         await RedisService.publish(
             RedisChannels.LOCATION_UPDATED,

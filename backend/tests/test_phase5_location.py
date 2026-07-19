@@ -100,6 +100,12 @@ def _patch_ingest_mocks(service, mock_location, trip_return=None):
         ),
         patch.object(service.trip_repo, "create", new_callable=AsyncMock),
         patch("app.services.location.RedisService.publish", new_callable=AsyncMock),
+        patch("app.services.location.GeofenceService.check_location", new_callable=AsyncMock),
+        patch(
+            "app.services.location.AlertEngineService.evaluate_location",
+            new_callable=AsyncMock,
+            return_value=[],
+        ),
     )
 
 
@@ -351,6 +357,8 @@ async def test_ingest_valid_location_publishes_redis(mock_db, make_device, make_
         patches[4],
         patches[5],
         patches[6] as mock_publish,
+        patches[7],
+        patches[8],
     ):
         result = await service.ingest_single(device, data)
 
@@ -381,6 +389,8 @@ async def test_moving_speed_sets_moving_status(mock_db, make_device, make_locati
         patches[4],
         patches[5],
         patches[6],
+        patches[7],
+        patches[8],
     ):
         await service.ingest_single(device, data)
 
@@ -405,6 +415,8 @@ async def test_zero_speed_sets_stopped_status(mock_db, make_device, make_locatio
         patches[4],
         patches[5],
         patches[6],
+        patches[7],
+        patches[8],
     ):
         await service.ingest_single(device, data)
 
@@ -432,6 +444,8 @@ async def test_moving_creates_trip(mock_db, make_device, make_location_ingest):
         patches[4],
         patches[5] as mock_trip_create,
         patches[6],
+        patches[7],
+        patches[8],
     ):
         await service.ingest_single(device, data)
 
@@ -459,6 +473,8 @@ async def test_stopped_speed_does_not_create_trip(mock_db, make_device, make_loc
         patches[4],
         patches[5] as mock_trip_create,
         patches[6],
+        patches[7],
+        patches[8],
     ):
         await service.ingest_single(device, data)
 
